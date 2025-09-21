@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Greek Speech Synthesis Model - Moira.AI</title>
+    <link rel="icon" type="image/svg+xml" href="./moira-favicon2.png" />
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            color: #333;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 2px solid #e1e5e9;
+            padding-bottom: 20px;
+        }
+        
+        :root {
+            --electric-blue: #0066ff;
+            --cyan: #00ffff;
+        }
+
+        .logo {
+            font-size: 2.5em;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .logo-moira {
+            color: #2c3e50;
+        }
+
+        .logo-ai {
+            background: linear-gradient(90deg, var(--electric-blue), var(--cyan));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+        }
+        
+        .title {
+            font-size: 2.2em;
+            margin: 20px 0 10px 0;
+            color: #24292f;
+        }
+        
+        .subtitle {
+            font-size: 1.1em;
+            color: #586069;
+            margin-bottom: 20px;
+        }
+        
+        .links {
+            margin: 20px 0;
+        }
+        
+        .links a {
+            margin: 0 10px;
+            color: #0366d6;
+            text-decoration: none;
+        }
+        
+        .links a:hover {
+            text-decoration: underline;
+        }
+        
+        .team-link {
+            color: #0366d6;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .team-link:hover {
+            text-decoration: underline;
+        }
+        
+        .abstract {
+            background-color: #f6f8fa;
+            padding: 20px;
+            border-radius: 6px;
+            margin: 30px 0;
+            border-left: 4px solid #0366d6;
+        }
+        
+        .contents {
+            background-color: #f6f8fa;
+            padding: 20px;
+            border-radius: 6px;
+            margin: 30px 0;
+        }
+        
+        .contents h3 {
+            margin-top: 0;
+            color: #24292f;
+        }
+        
+        .contents ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .contents li {
+            margin: 8px 0;
+        }
+        
+        .contents a {
+            color: #0366d6;
+            text-decoration: none;
+        }
+        
+        .contents a:hover {
+            text-decoration: underline;
+        }
+        
+        .section {
+            margin: 40px 0;
+        }
+        
+        .section h2 {
+            color: #24292f;
+            border-bottom: 1px solid #e1e5e9;
+            padding-bottom: 10px;
+        }
+        
+        .subsection {
+            margin-left: 20px;
+        }
+        
+        .subsection h4 {
+            color: #24292f;
+            margin-bottom: 10px;
+        }
+        
+        .dialogue-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background-color: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        
+        .dialogue-table th,
+        .dialogue-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid #e1e5e9;
+        }
+        
+        .dialogue-table th {
+            background-color: #f6f8fa;
+            font-weight: 600;
+            color: #24292f;
+        }
+        
+        .dialogue-table tr:hover {
+            background-color: #f6f8fa;
+        }
+        
+        .audio-player {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .audio-player button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 4px 8px;
+            border-radius: 3px;
+        }
+        
+        .audio-player button:hover {
+            background-color: #f6f8fa;
+        }
+        
+        .timestamp {
+            color: #586069;
+            font-size: 0.9em;
+        }
+        
+        .emotion-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+        
+        .emotion-angry { background-color: #ffeaa7; color: #d73502; }
+        .emotion-apology { background-color: #e1f5fe; color: #0277bd; }
+        .emotion-concern { background-color: #f3e5f5; color: #7b1fa2; }
+        .emotion-happy { background-color: #e8f5e8; color: #2e7d32; }
+        .emotion-sad { background-color: #fce4ec; color: #c2185b; }
+        .emotion-surprised { background-color: #fff3e0; color: #f57c00; }
+        
+        .speaker-label {
+            font-weight: bold;
+            color: #24292f;
+        }
+        
+        @media (max-width: 768px) {
+            .dialogue-table {
+                font-size: 0.9em;
+            }
+            
+            .dialogue-table th,
+            .dialogue-table td {
+                padding: 8px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo"><span class="logo-moira">Moira</span><span class="logo-ai">.AI</span></div>
+        <h1 class="title">Greek Speech Synthesis Model</h1>
+        <div class="subtitle">CSM 1B Adapted for Greek Language</div>
+        <div class="links">
+            <a href="#" target="_blank">[Model]</a>
+            <a href="#" target="_blank">[Dataset]</a>
+        </div>
+        <div>
+            <a href="https://moira-ai.com/" class="team-link">Moira.AI</a>
+        </div>
+    </div>
+
+    <div class="abstract">
+        <strong>Abstract.</strong> This report documents the process of adapting the CSM 1B conversational speech model for
+            the Greek language. The primary motivation was to address the scarcity of high-quality, open-
+            source Text-to-Speech (TTS) models for Greek. By leveraging Low-Rank Adaptation (LoRA),
+            a parameter-efficient finetuning technique, we successfully retrained the model on a curated
+            dataset of high-quality Greek speech. The resulting model generates highly intelligible and
+            natural-sounding Greek speech with clear articulation. This work not only provides a valuable
+            open-source TTS tool for the Greek-speaking community but also validates LoRA as a resource-
+            efficient and effective method for adapting large speech models to less-resourced languages.
+    </div>
+
+    <div class="contents">
+        <h3>Audio Samples</h3>
+        <ul>
+            <li><a href="#greek-speech-samples">Greek Speech Generation</a></li>
+            <li><a href="#voice-quality">Voice Quality Demonstrations</a></li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2 id="greek-speech-samples">Greek Speech Generation</h2>
+        <p>Sample audio generations demonstrating the natural and intelligible Greek speech produced by our adapted CSM 1B model.</p>
+
+        <table class="dialogue-table">
+            <thead>
+                <tr>
+                    <th>Greek Text</th>
+                    <th>English Translation</th>
+                    <th>Audio Sample</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Γεια σας! Πώς είστε σήμερα;</td>
+                    <td>Hello! How are you today?</td>
+                    <td>
+                        <div class="audio-player">
+                            <button>▶</button>
+                            <span class="timestamp">0:00 / 0:03</span>
+                            <button>⏸</button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Η τεχνολογία προχωράει με γρήγορους ρυθμούς.</td>
+                    <td>Technology is advancing at rapid rates.</td>
+                    <td>
+                        <div class="audio-player">
+                            <button>▶</button>
+                            <span class="timestamp">0:00 / 0:04</span>
+                            <button>⏸</button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Θα ήθελα να επισκεφθώ την Αθήνα κάποια μέρα.</td>
+                    <td>I would like to visit Athens someday.</td>
+                    <td>
+                        <div class="audio-player">
+                            <button>▶</button>
+                            <span class="timestamp">0:00 / 0:04</span>
+                            <button>⏸</button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Το ελληνικό φαγητό είναι πεντανόστιμο!</td>
+                    <td>Greek food is delicious!</td>
+                    <td>
+                        <div class="audio-player">
+                            <button>▶</button>
+                            <span class="timestamp">0:00 / 0:03</span>
+                            <button>⏸</button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Σας ευχαριστούμε για την προσοχή σας.</td>
+                    <td>Thank you for your attention.</td>
+                    <td>
+                        <div class="audio-player">
+                            <button>▶</button>
+                            <span class="timestamp">0:00 / 0:03</span>
+                            <button>⏸</button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+
+
+    <div class="section">
+        <h2 id="voice-quality">Voice Quality Demonstrations</h2>
+        <p>Examples highlighting the clarity, naturalness, and articulation quality of the generated Greek speech across different sentence types and complexities.</p>
+
+        <table class="dialogue-table">
+            <thead>
+                <tr>
+                    <th>Text Type</th>
+                    <th>Greek Example</th>
+                    <th>Audio Sample</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Simple Statement</td>
+                    <td>Ο ήλιος λάμπει.</td>
+                    <td>
+                        <div class="audio-player">
+                            <button>▶</button>
+                            <span class="timestamp">0:00 / 0:02</span>
+                            <button>⏸</button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Complex Sentence</td>
+                    <td>Παρόλο που έβρεχε, αποφασίσαμε να πάμε μια βόλτα στο πάρκο.</td>
+                    <td>
+                        <div class="audio-player">
+                            <button>▶</button>
+                            <span class="timestamp">0:00 / 0:05</span>
+                            <button>⏸</button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Question</td>
+                    <td>Τι ώρα είναι η συνάντηση;</td>
+                    <td>
+                        <div class="audio-player">
+                            <button>▶</button>
+                            <span class="timestamp">0:00 / 0:02</span>
+                            <button>⏸</button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Exclamation</td>
+                    <td>Τι όμορφη μέρα!</td>
+                    <td>
+                        <div class="audio-player">
+                            <button>▶</button>
+                            <span class="timestamp">0:00 / 0:02</span>
+                            <button>⏸</button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Audio player functionality
+        document.querySelectorAll('.audio-player button:first-child').forEach(button => {
+            button.addEventListener('click', function() {
+                // Toggle play/pause functionality would go here
+                const timestamp = this.nextElementSibling;
+                if (this.textContent === '▶') {
+                    this.textContent = '⏸';
+                    // Start playing logic here
+                } else {
+                    this.textContent = '▶';
+                    // Pause logic here
+                }
+            });
+        });
+
+        // Pause buttons
+        document.querySelectorAll('.audio-player button:last-child').forEach(button => {
+            button.addEventListener('click', function() {
+                const playButton = this.previousElementSibling.previousElementSibling;
+                playButton.textContent = '▶';
+                // Pause logic here
+            });
+        });
+    </script>
+</body>
+</html>
